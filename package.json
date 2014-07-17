@@ -1,0 +1,38 @@
+{
+  "name": "lacona-phrase-suggester",
+  "version": "0.0.0",
+  "description": "Lacona phrase that accepts all input but makes programmatically defined suggestions",
+  "main": "lib/suggester.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "lodash": "^2.4.1"
+  },
+  "devDependencies": {
+    "mocha": "^1.20.1",
+    "chai": "^1.9.1",
+    "lacona": "^0.0.7",
+    "sinon": "^1.10.3",
+    "sinon-chai": "^2.5.0"
+  },
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brandonhorst/lacona-phrase-suggester.git"
+  },
+  "keywords": [
+    "lacona",
+    "phrase",
+    "suggest",
+    "suggester"
+  ],
+  "author": "@brandonhorst",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brandonhorst/lacona-phrase-suggester/issues"
+  },
+  "homepage": "https://github.com/brandonhorst/lacona-phrase-suggester"
+}
