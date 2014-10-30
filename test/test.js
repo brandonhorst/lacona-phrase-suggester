@@ -10,7 +10,7 @@ describe('suggester', function () {
 	var parser;
 
 	beforeEach(function () {
-		parser = new Parser().understand(suggester);
+		parser = new Parser({sentences: ['test']});
 	});
 
 	it('handles a valid integer', function (done) {
@@ -22,14 +22,15 @@ describe('suggester', function () {
 					});
 				}
 			},
-			schema: {
+			phrases: [{
+				name: 'test',
 				root: {
 					type: 'suggester',
 					suggest: 'suggestFunction',
 					id: 'test'
-				},
-				run: ''
-			}
+				}
+			}],
+			dependencies: [suggester]
 		}
 
 		var handleData = sinon.spy(function (data) {
