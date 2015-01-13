@@ -1,6 +1,6 @@
 {
   "name": "lacona-phrase-suggester",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Lacona phrase that accepts all input but makes programmatically defined suggestions",
   "main": "lib/suggester.js",
   "directories": {
