@@ -1,55 +1,72 @@
 var chai = require('chai');
 var expect = chai.expect;
-var suggester = require('../lib/suggester')
-var sinon = require('sinon');
-var Parser = require('lacona').Parser;
+var lacona = require('lacona');
+var stream = require('stream');
 
-chai.use(require('sinon-chai'));
+var suggester = require('..');
+
+function toStream(strings) {
+	var newStream = new stream.Readable({objectMode: true});
+
+	strings.forEach(function (string) {
+		newStream.push(string);
+	});
+	newStream.push(null);
+
+	return newStream;
+}
+
+function toArray(done) {
+	var newStream = new stream.Writable({objectMode: true});
+	var list = [];
+	newStream.write = function(obj) {
+		list.push(obj);
+	};
+
+	newStream.end = function() {
+		done(list);
+	};
+
+	return newStream;
+}
 
 describe('suggester', function () {
 	var parser;
 
 	beforeEach(function () {
-		parser = new Parser({sentences: ['test']});
+		parser = new lacona.Parser();
 	});
 
-	it('handles a valid integer', function (done) {
-		var grammar = {
-			scope: {
-				suggestFunction: function (input, done) {
-					process.nextTick(function () {
-						done(null, input +  ' and more');
-					});
-				}
+	it('suggests something', function (done) {
+		var test = lacona.createPhrase({
+			name: 'test/test',
+			suggestFunction: function (input, data, done) {
+				setTimeout(function () {
+					data(input +  ' and more');
+					done(null);
+				}, 0);
 			},
-			phrases: [{
-				name: 'test',
-				root: {
-					type: 'suggester',
-					suggest: 'suggestFunction',
+			describe: function () {
+				return suggester({
+					suggest: this.suggestFunction,
 					id: 'test'
-				}
-			}],
-			dependencies: [suggester]
-		}
-
-		var handleData = sinon.spy(function (data) {
-			if (handleData.callCount === 1) {
-				expect(data.match[0].string).to.equal('test');
-			} else if (handleData.callCount === 2) {
-				expect(data.suggestion.words[0].string).to.equal('test and more')
+				});
 			}
 		});
 
-		var handleEnd = function () {
-			expect(handleData).to.have.been.called.twice;
-			done()
-		};
+		function callback(data) {
+			expect(data).to.have.length(4);
+			expect(data[1].data.match[0].string).to.equal('test');
+			expect(data[1].data.result.test).to.equal('test');
+			expect(data[2].data.suggestion.words[0].string).to.equal('test and more');
+			expect(data[2].data.result.test).to.equal('test and more');
+			done();
+		}
 
-		parser
-		.understand(grammar)
-		.on('data', handleData)
-		.on('end', handleEnd)
-		.parse('test');
+		parser.sentences = [test()];
+
+		toStream(['test'])
+			.pipe(parser)
+			.pipe(toArray(callback));
 	});
 });
