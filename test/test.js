@@ -1,5 +1,6 @@
 var chai = require('chai');
 var expect = chai.expect;
+var fulltext = require('lacona-util-fulltext');
 var lacona = require('lacona');
 var stream = require('stream');
 
@@ -56,9 +57,9 @@ describe('suggester', function () {
 
 		function callback(data) {
 			expect(data).to.have.length(4);
-			expect(data[1].data.match[0].string).to.equal('test');
+			expect(fulltext.match(data[1].data)).to.equal('test');
 			expect(data[1].data.result.test).to.equal('test');
-			expect(data[2].data.suggestion.words[0].string).to.equal('test and more');
+			expect(fulltext.suggestion(data[2].data)).to.equal('test and more');
 			expect(data[2].data.result.test).to.equal('test and more');
 			done();
 		}
